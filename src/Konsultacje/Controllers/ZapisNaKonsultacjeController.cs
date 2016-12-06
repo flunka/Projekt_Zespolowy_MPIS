@@ -56,12 +56,24 @@ namespace Konsultacje.Controllers
             }
 
             var zapisNaKonsultacje = await _context.ZapisNaKonsultacje.SingleOrDefaultAsync(m => m.ID == id);
+            var konsultacja = await _context.Konsultacja.SingleOrDefaultAsync(m => m.ID == zapisNaKonsultacje.KonsultacjaID);
+            var student = await _context.Users.SingleOrDefaultAsync(m => m.Id == zapisNaKonsultacje.StudentID);
             if (zapisNaKonsultacje == null)
             {
                 return NotFound();
             }
 
-            return View(zapisNaKonsultacje);
+            var model = new PrzegladajZapisyViewModel
+            {
+                Id = zapisNaKonsultacje.ID,
+                DisplayName = student.DisplayName,
+                Temat = zapisNaKonsultacje.Temat,
+                Termin = konsultacja.Termin,
+                Budynek = konsultacja.Budynek,
+                Sala = konsultacja.Sala
+            };
+
+            return View(model);
         }
 
         // GET: ZapisNaKonsultacje/Create
