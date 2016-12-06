@@ -13,6 +13,7 @@ namespace Konsultacje.Models
         public DateTime Termin { get; set; }
         public int Sala { get; set; }
         public int Budynek { get; set; }
+        public int Limit { get; set; }
 
         public List<ZapisNaKonsultacje> ZapisNaKonsultacje { get; set; }
     }

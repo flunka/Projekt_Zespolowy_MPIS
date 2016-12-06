@@ -92,6 +92,10 @@ namespace Konsultacje.Controllers
         {
             if (ModelState.IsValid)
             {
+                if (!SaWolneMiejsca(zapisNaKonsultacje.KonsultacjaID))
+                {
+                    return NotFound();//TODO: Trzeba wyœwietlaæ info o braku miejsc na konsultacje
+                }
                 var student = _context.Users.Single(user => user.Id == _userManager.GetUserId(User));
                 zapisNaKonsultacje.Student = student;
                 _context.Add(zapisNaKonsultacje);
@@ -183,6 +187,27 @@ namespace Konsultacje.Controllers
         private bool ZapisNaKonsultacjeExists(int id)
         {
             return _context.ZapisNaKonsultacje.Any(e => e.ID == id);
+        }
+
+        private bool konsultacjaMaLimit(int idKonsultacji) {
+            return _context.Konsultacja.Single(konsultacja => konsultacja.ID == idKonsultacji).Limit > 0;
+        }
+
+        private int policzZapisanychNaKonsultacje(int idKonsultacji) {
+            return _context.ZapisNaKonsultacje.Count(m => m.KonsultacjaID == idKonsultacji);
+        }
+
+        private bool SaWolneMiejsca(int idKonsultacji) {
+            if (konsultacjaMaLimit(idKonsultacji))
+            {
+                var liczba = policzZapisanychNaKonsultacje(idKonsultacji);
+                if (liczba >= _context.Konsultacja.Single(m => m.ID == idKonsultacji).Limit)
+                {
+                    return false;
+                }
+                else return true;
+            }
+            return true;
         }
     }
 }
