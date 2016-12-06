@@ -1,0 +1,43 @@
+@model Konsultacje.Models.KonsultacjaViewModel.PrzegladajKonsultacjeViewModel
+
+@{
+    ViewData["Title"] = "Details";
+}
+
+<h2>Details</h2>
+
+<div>
+    <h4>Konsultacja</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.DisplayName)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.DisplayName)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.Budynek)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Budynek)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.Sala)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Sala)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.Termin)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Termin)
+        </dd>
+    </dl>
+</div>
+<div>
+    <a asp-action="Edit" asp-route-id="@Model.Id">Edit</a> |
+    <a asp-action="Index">Back to List</a>
+    <a asp-action="Zapis" asp-route-id="@Model.Id">Zapisz siê</a>
+</div>
