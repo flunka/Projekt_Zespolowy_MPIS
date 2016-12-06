@@ -10,6 +10,8 @@ using Konsultacje.Models;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Identity;
 using Konsultacje.Models.KonsultacjaViewModel;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Konsultacje.Controllers
 {
@@ -85,6 +87,7 @@ namespace Konsultacje.Controllers
         // POST: Konsultacjas/Create
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
+        [Authorize(Roles = "PracownikUczelni")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("ID,Budynek,Sala,Termin,Limit")] Konsultacja konsultacja)
@@ -178,6 +181,37 @@ namespace Konsultacje.Controllers
             await _context.SaveChangesAsync();
             return RedirectToAction("Index");
         }
+
+        public async Task<IActionResult> Zaproponuj()
+        {
+            var query = from a in _context.Users.ToList()
+                        join b in _context.UserRoles on a.Id equals b.UserId
+                        join c in _context.Roles on b.RoleId equals c.Id
+                        where c.Name == "PracownikUczelni"
+                        select new ApplicationUser{ 
+                            DisplayName = a.DisplayName,                           
+                            Id = a.Id                            
+                        };
+
+            SelectList lista = new SelectList(query.ToList(), "Id", "DisplayName");
+            ViewBag.PracownikUczelniID = lista;                 
+            return View();
+        }
+
+        [Authorize(Roles = "Student")]
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Zaproponuj([Bind("ID,Termin,Temat,PracownikUczelniID")] PropozycjeKonsultacjiViewModel propozycjaKonsultacji)
+        {
+            if (ModelState.IsValid)
+            {
+                return RedirectToAction("Index", "Home", null);
+            }
+            return View();
+        }
+
+
+
 
         private bool KonsultacjaExists(int id)
         {

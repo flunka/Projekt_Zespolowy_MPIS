@@ -13,6 +13,12 @@
         <a asp-action="Create">Create New</a>
     </p>
     }
+    @if (User.IsInRole("Student"))
+    {
+    <p>
+        <a asp-action="Zaproponuj">Zaproponuj dodatkowy termin</a>
+    </p>
+    }
     <table class="table">
         <thead>
             <tr>
