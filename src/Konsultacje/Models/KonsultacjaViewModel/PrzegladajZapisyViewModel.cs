@@ -11,6 +11,8 @@ namespace Konsultacje.Models.KonsultacjaViewModel
         public int Id { get; set; }
         [Display(Name = "Student")]
         public string DisplayName { get; set; }
+        [Display(Name ="Pracownik Uczelni")]
+        public string DispalyName2 { get; set; }
         public DateTime Termin { get; set; }
         public string Temat { get; set; }
         public int Budynek { get; set; }

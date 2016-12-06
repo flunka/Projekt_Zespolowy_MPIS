@@ -1,14 +1,18 @@
 @model IEnumerable<Konsultacje.Models.KonsultacjaViewModel.PrzegladajKonsultacjeViewModel>
 
+@inject UserManager<ApplicationUser> UserManager
+
     @{
-        ViewData["Title"] = "Index";
+        ViewData["Title"] = "Konsultacje";
     }
 
-    <h2>Index</h2>
-
+    <h2>@ViewData["Title"]</h2>
+    @if (User.IsInRole("PracownikUczelni"))
+    {
     <p>
         <a asp-action="Create">Create New</a>
     </p>
+    }
     <table class="table">
         <thead>
             <tr>
@@ -43,10 +47,13 @@
                 <td>
                     @Html.DisplayFor(modelItem => item.Termin)
                 </td>
-                <td>
-                    <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                    <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                    <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                <td>                    
+                    <a asp-action="Details" asp-route-id="@item.Id">Details</a>
+                    @if (User.IsInRole("PracownikUczelni") && item.IdPracownika == UserManager.GetUserId(User))
+                    {
+                    <a asp-action="Edit" asp-route-id="@item.Id">Edit</a>
+                    <a asp-action = "Delete" asp-route-id = "@item.Id" > Delete </a>
+                    }
                 </td>
             </tr>
             }

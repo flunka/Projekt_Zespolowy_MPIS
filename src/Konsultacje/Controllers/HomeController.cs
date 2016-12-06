@@ -10,6 +10,7 @@ namespace Konsultacje.Controllers
     {
         public IActionResult Index()
         {
+           
             return View();
         }
 

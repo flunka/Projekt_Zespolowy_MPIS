@@ -9,9 +9,11 @@ using Konsultacje.Data;
 using Konsultacje.Models;
 using Konsultacje.Models.KonsultacjaViewModel;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Konsultacje.Controllers
 {
+    [Authorize(Roles = "Student, PracownikUczelni")]
     public class ZapisNaKonsultacjeController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -25,6 +27,7 @@ namespace Konsultacje.Controllers
         }
 
         // GET: ZapisNaKonsultacje
+        [Authorize(Roles = "PracownikUczelni")]
         public async Task<IActionResult> Index()
         {
             var pracownik = _context.Users.Single(user => user.Id == _userManager.GetUserId(User));
@@ -48,6 +51,7 @@ namespace Konsultacje.Controllers
         }
 
         // GET: ZapisNaKonsultacje/Details/5
+        [Authorize(Roles = "PracownikUczelni, Student")]
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -77,6 +81,7 @@ namespace Konsultacje.Controllers
         }
 
         // GET: ZapisNaKonsultacje/Create
+        [Authorize(Roles = "Student")]
         public IActionResult Create(int id)
         {
             ViewData["IdKonsultacji"] = id;
@@ -86,6 +91,7 @@ namespace Konsultacje.Controllers
         // POST: ZapisNaKonsultacje/Create
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
+        [Authorize(Roles = "Student")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Temat,KonsultacjaID")] ZapisNaKonsultacje zapisNaKonsultacje)
@@ -94,13 +100,13 @@ namespace Konsultacje.Controllers
             {
                 if (!SaWolneMiejsca(zapisNaKonsultacje.KonsultacjaID))
                 {
-                    return NotFound();//TODO: Trzeba wyœwietlaæ info o braku miejsc na konsultacje
+                    return RedirectToAction("BrakMiejsc");//TODO: Trzeba wyœwietlaæ info o braku miejsc na konsultacje
                 }
                 var student = _context.Users.Single(user => user.Id == _userManager.GetUserId(User));
                 zapisNaKonsultacje.Student = student;
                 _context.Add(zapisNaKonsultacje);
                 await _context.SaveChangesAsync();
-                return RedirectToAction("Index");
+                return RedirectToAction("Student");
             }
             return View(zapisNaKonsultacje);
         }
@@ -126,7 +132,7 @@ namespace Konsultacje.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("ID,Temat")] ZapisNaKonsultacje zapisNaKonsultacje)
+        public async Task<IActionResult> Edit(int id, [Bind("ID,Temat,KonsultacjaID,StudentID")] ZapisNaKonsultacje zapisNaKonsultacje)
         {
             if (id != zapisNaKonsultacje.ID)
             {
@@ -151,7 +157,7 @@ namespace Konsultacje.Controllers
                         throw;
                     }
                 }
-                return RedirectToAction("Index");
+                return RedirectToAction("Student");
             }
             return View(zapisNaKonsultacje);
         }
@@ -183,6 +189,42 @@ namespace Konsultacje.Controllers
             await _context.SaveChangesAsync();
             return RedirectToAction("Index");
         }
+
+        // GET: ZapisNaKonsultacje/Student
+        [Authorize(Roles = "Student")]
+        public async Task<IActionResult> Student()
+        {
+            var student = _context.Users.Single(user => user.Id == _userManager.GetUserId(User));
+
+            var query = from c in _context.ZapisNaKonsultacje.ToList()
+                        join f in _context.Konsultacja.ToList() on c.KonsultacjaID equals f.ID
+                        join g in _context.Users.ToList() on f.PracownikUczelniID equals g.Id
+                        where c.StudentID == student.Id
+                        select new PrzegladajZapisyViewModel
+                        {
+                            Id = c.ID,
+                            DispalyName2 = g.DisplayName,
+                            Temat = c.Temat,
+                            Budynek = f.Budynek,
+                            Sala = f.Sala,
+                            Termin = f.Termin
+                        };
+
+
+            return View(query);
+        }
+
+        public async Task<IActionResult> BrakMiejsc()
+        {
+            return View();
+        }
+
+        public async Task<IActionResult> PowrotLista()
+        {
+            return RedirectToAction("Index","Konsultacja",null);
+        }
+
+
 
         private bool ZapisNaKonsultacjeExists(int id)
         {

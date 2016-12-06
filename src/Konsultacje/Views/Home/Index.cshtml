@@ -7,8 +7,17 @@
     <div class="col-md-3">
         <h2>Konsultacje</h2>
         <ul>
-            <li><a href="/Konsultacja">Przegjądaj</a></li>
-            <li><a href="/ZapisNaKonsultacje">Zapisani na konsultacje</a></li>
+            <li><a href="/Konsultacja">Przegjądaj wszystkie</a></li>
+            @if (User.IsInRole("Student"))
+            {
+            <li><a href="/ZapisNaKonsultacje/Student">Przegjądaj konsultacje, na które się zapisałem</a></li>
+            }
+            @if (User.IsInRole("PracownikUczelni"))
+            {
+
+            <li><a href="/Konsultacja?moje=true">Przegjądaj moje</a></li>
+            <li><a id="zapisani" href="/ZapisNaKonsultacje">Zapisani na konsultacje</a></li>
+            }
         </ul>
     </div>
     <div class="col-md-3">

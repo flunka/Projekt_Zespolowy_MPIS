@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Konsultacje.Models;
+using Konsultacje.Models.KonsultacjaViewModel;
 
 namespace Konsultacje.Data
 {
@@ -47,5 +48,7 @@ namespace Konsultacje.Data
         public DbSet<Konsultacja> Konsultacja { get; set; }
 
         public DbSet<ZapisNaKonsultacje> ZapisNaKonsultacje { get; set; }
+
+        public DbSet<PrzegladajZapisyViewModel> PrzegladajZapisyViewModel { get; set; }
     }
 }

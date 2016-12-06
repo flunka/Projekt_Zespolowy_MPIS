@@ -30,18 +30,16 @@ namespace Konsultacje.Controllers
         }
 
         // GET: Konsultacjas
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(bool moje)
         {
-            var query = from c in _context.Konsultacja.ToList()
-                        join d in _context.Users.ToList() on c.PracownikUczelniID equals d.Id
-                        select new PrzegladajKonsultacjeViewModel
-                        {
-                            Id = c.ID,
-                            DisplayName = d.DisplayName,
-                            Budynek = c.Budynek,
-                            Sala = c.Sala,
-                            Termin = c.Termin
-                        };
+            IEnumerable<PrzegladajKonsultacjeViewModel> query;
+            if (moje) {
+                query = pobierzMoje();
+            }
+            else {
+                query = pobierzWszystkie();
+            }
+            
             
             return View(query);
         }
@@ -64,6 +62,7 @@ namespace Konsultacje.Controllers
             var model = new PrzegladajKonsultacjeViewModel()
             {
                 Id = konsultacja.ID,
+                IdPracownika = pracownik.Id,
                 DisplayName = pracownik.DisplayName,
                 Budynek = konsultacja.Budynek,
                 Sala = konsultacja.Sala,
@@ -122,7 +121,7 @@ namespace Konsultacje.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("ID,Budynek,Sala,Termin")] Konsultacja konsultacja)
+        public async Task<IActionResult> Edit(int id, [Bind("ID,Budynek,Sala,Termin,Limit,PracownikUczelniID")] Konsultacja konsultacja)
         {
             if (id != konsultacja.ID)
             {
@@ -130,7 +129,7 @@ namespace Konsultacje.Controllers
             }
 
             if (ModelState.IsValid)
-            {
+            {                
                 try
                 {
                     _context.Update(konsultacja);
@@ -183,6 +182,37 @@ namespace Konsultacje.Controllers
         private bool KonsultacjaExists(int id)
         {
             return _context.Konsultacja.Any(e => e.ID == id);
+        }
+
+        private IEnumerable<PrzegladajKonsultacjeViewModel> pobierzWszystkie() {
+            var query = from c in _context.Konsultacja.ToList()
+                        join d in _context.Users.ToList() on c.PracownikUczelniID equals d.Id
+                        select new PrzegladajKonsultacjeViewModel
+                        {
+                            Id = c.ID,
+                            IdPracownika = d.Id,
+                            DisplayName = d.DisplayName,
+                            Budynek = c.Budynek,
+                            Sala = c.Sala,
+                            Termin = c.Termin
+                        };
+            return query;
+        }
+        private IEnumerable<PrzegladajKonsultacjeViewModel> pobierzMoje()
+        {
+            var query = from c in _context.Konsultacja.ToList()
+                        join d in _context.Users.ToList() on c.PracownikUczelniID equals d.Id
+                        where c.PracownikUczelniID == _context.Users.Single(user => user.Id == _userManager.GetUserId(User)).Id
+                        select new PrzegladajKonsultacjeViewModel
+                        {
+                            Id = c.ID,
+                            IdPracownika = d.Id,
+                            DisplayName = d.DisplayName,
+                            Budynek = c.Budynek,
+                            Sala = c.Sala,
+                            Termin = c.Termin
+                        };
+            return query;
         }
     }
 }
