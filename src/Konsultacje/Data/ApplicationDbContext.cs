@@ -43,6 +43,18 @@ namespace Konsultacje.Data
                 .WithMany(b => b.Konsultacje)
                 .HasForeignKey(p => p.PracownikUczelniID)
                 .HasConstraintName("ForeignKey_Konsultacja_Pracownik");
+           
+            builder.Entity<PropozycjaKonsultacji>()
+            .HasOne(p => p.PracownikUczelni)
+            .WithMany(b => b.PropozycjeKonsultacji)
+            .HasForeignKey(p => p.PracownikUczelniID)
+            .HasConstraintName("ForeignKey_Propozycja_Pracownik");
+
+            builder.Entity<PropozycjaKonsultacji>()
+            .HasOne(p => p.Student)
+            .WithMany(b => b.PropozycjeKonsultacji2)
+            .HasForeignKey(p => p.StudentID)
+            .HasConstraintName("ForeignKey_Propozycja_Student");
         }
 
         public DbSet<Konsultacja> Konsultacja { get; set; }

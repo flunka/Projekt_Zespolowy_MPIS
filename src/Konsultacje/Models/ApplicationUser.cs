@@ -18,6 +18,8 @@ namespace Konsultacje.Models
 
         public List<ZapisNaKonsultacje> ZapisNaKonsultacje { get; set; }
         public List<Konsultacja> Konsultacje { get; set; }
+        public List<PropozycjaKonsultacji> PropozycjeKonsultacji { get; set; }
+        public List<PropozycjaKonsultacji> PropozycjeKonsultacji2 { get; set; }
 
     }
 }
