@@ -1,0 +1,58 @@
+@model Konsultacje.Models.PropozycjaKonsultacji
+
+@{
+    ViewData["Title"] = "Delete";
+}
+
+<h2>Delete</h2>
+@if (User.IsInRole("PracownikUczelni"))
+{
+<h3>Czy jestes pewien, ¿e chcesz odrzuciæ tê propozycjê?</h3>
+}
+@if (User.IsInRole("Student"))
+{
+    <h3>Czy jestes pewien, ¿e chcesz usun¹æ tê propozycjê?</h3>
+}
+<div>
+    <h4>PropozycjaKonsultacji</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        @if (User.IsInRole("Student"))
+        {
+        <dt>
+            @Html.DisplayNameFor(model => model.PracownikUczelni.DisplayName)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.PracownikUczelni.DisplayName)
+        </dd>
+        }
+        @if (User.IsInRole("PracownikUczelni"))
+        {
+        <dt>
+            Student
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Student.DisplayName)
+        </dd>
+        }
+        <dt>
+            @Html.DisplayNameFor(model => model.Temat)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Temat)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.Termin)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Termin)
+        </dd>
+    </dl>
+    
+    <form asp-action="Odrzuc">
+        <div class="form-actions no-color">
+            <input type="submit" value="Odrzuc" class="btn btn-default" /> |
+            <a asp-action="Index">Back to List</a>
+        </div>
+    </form>
+</div>

@@ -62,5 +62,7 @@ namespace Konsultacje.Data
         public DbSet<ZapisNaKonsultacje> ZapisNaKonsultacje { get; set; }
 
         public DbSet<PrzegladajZapisyViewModel> PrzegladajZapisyViewModel { get; set; }
+
+        public DbSet<PropozycjaKonsultacji> PropozycjaKonsultacji { get; set; }
     }
 }

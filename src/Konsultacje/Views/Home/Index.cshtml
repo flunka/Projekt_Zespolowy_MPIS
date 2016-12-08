@@ -11,12 +11,14 @@
             @if (User.IsInRole("Student"))
             {
             <li><a href="/ZapisNaKonsultacje/Student">Przegjądaj konsultacje, na które się zapisałem</a></li>
+            <li><a href="/PropozycjaKonsultacji">Przegjądaj moje propozycje konsultacji</a></li>
             }
             @if (User.IsInRole("PracownikUczelni"))
             {
 
             <li><a href="/Konsultacja?moje=true">Przegjądaj moje</a></li>
             <li><a id="zapisani" href="/ZapisNaKonsultacje">Zapisani na konsultacje</a></li>
+            <li><a href="/PropozycjaKonsultacji">Przegjądaj propozycje konsultacji</a></li>
             }
         </ul>
     </div>
